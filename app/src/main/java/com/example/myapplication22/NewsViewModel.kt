@@ -1,19 +1,28 @@
 package com.example.myapplication22
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-
-class NewsViewModel : ViewModel() {
+class NewsViewModel: ViewModel() {
     val newsList = listOf(
-        News("2DROTS выиграли FC10", 0),
-        News("Николай Соболев вернулся в США", 2),
-        News("Spirit собрали новый состав", 3),
-        News("Нави терпят поражение", 4),
-        News("Когда же игроки вп заберут трофей?", 5)
-    )
+        News("Новость 1", 0),
+        News("Новость 2", 0),
+        News("Новость 3", 0),
+        News("Новость 4", 0),
+        News("Новость 5", 0),
+        News("Новость 6", 0),
+        News("Новость 7", 0),
+    ).slice(1..5).toMutableList()
 
-    var currentNewsIndex = 0
+    private val currentNewsIndex = mutableStateOf(0)
 
-    fun onLikeClicked(index: Int) {
-        newsList[index].likes++
+    val currentNews: News
+        get() = newsList[currentNewsIndex.value]
+    fun onLikeClicked(news: News) {
+        news.likes++
+    }
+
+    fun changeCurrentNews() {
+        newsList.shuffle()
+        currentNewsIndex.value = (currentNewsIndex.value + 1) % newsList.size
     }
 }

@@ -7,7 +7,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import androidx.activity.compose.setContent
+import com.example.myapplication22.NewsViewModel
 
 class MainActivity : ComponentActivity() {
 

@@ -68,5 +68,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     implementation("androidx.compose.material3:material3:1.0.1")
     implementation("androidx.compose.material:material:1.4.1")
-
+    implementation ("androidx.activity:activity-ktx:1.4.0")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.1")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel:2.4.0")
 }
