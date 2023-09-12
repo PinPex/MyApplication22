@@ -71,7 +71,7 @@ fun NewsItem(news: News, onLikeClick: () -> Unit) {
                     .padding(end = 4.dp)
             ) {
                 Icon(
-                    imageVector = if (liked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    imageVector = Icons.Default.FavoriteBorder,
                     contentDescription = "Like"
                 )
             }
