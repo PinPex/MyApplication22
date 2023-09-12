@@ -15,9 +15,14 @@ class NewsViewModel : ViewModel() {
         News("Заголовок 3", "Содержание новости 3", 0),
         News("Заголовок 4", "Содержание новости 4", 0),
         News("Заголовок 5", "Содержание новости 5", 0),
+        News("Заголовок 6", "Содержание новости 6", 0),
+        News("Заголовок 7", "Содержание новости 7", 0),
+        News("Заголовок 8", "Содержание новости 8", 0),
+        News("Заголовок 9", "Содержание новости 9", 0),
+        News("Заголовок 10", "Содержание новости 10", 0),
     )
 
-    private val _newsState = MutableStateFlow(newsList)
+    private val _newsState = MutableStateFlow<List<News>>(getRandomNewsSubset())
     val newsState: StateFlow<List<News>> = _newsState
 
     init {
@@ -28,7 +33,9 @@ class NewsViewModel : ViewModel() {
         val index = newsList.indexOf(news)
         if (index != -1) {
             newsList[index].likes++
-            _newsState.value = newsList.toList().toMutableList()
+            // Обновляем только видимую подборку новостей
+            val updatedSubset = _newsState.value.map { if (it == news) newsList[index] else it }
+            _newsState.value = updatedSubset
         }
     }
 
@@ -42,9 +49,20 @@ class NewsViewModel : ViewModel() {
     }
 
     private fun replaceRandomNews() {
-        val randomIndex = Random.nextInt(newsList.size)
-        val updatedList = newsList.toMutableList()
-        updatedList[randomIndex] = News("Новый заголовок", "Новое содержание", 0)
-        _newsState.value = updatedList.toList().toMutableList()
+        val visibleNews = _newsState.value
+        val remainingNews = newsList.filterNot { it in visibleNews }
+
+        if (remainingNews.isNotEmpty()) {
+            val randomVisibleIndex = Random.nextInt(visibleNews.size)
+            val randomRemainingIndex = Random.nextInt(remainingNews.size)
+
+            val updatedVisibleList = visibleNews.toMutableList()
+            updatedVisibleList[randomVisibleIndex] = remainingNews[randomRemainingIndex]
+
+            _newsState.value = updatedVisibleList
+        }
+    }
+    private fun getRandomNewsSubset(): List<News> {
+        return newsList.shuffled().take(4) // Выбираем случайные 4 новости из списка
     }
 }
