@@ -14,27 +14,65 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.*
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun NewsScreen(viewModel: NewsViewModel = viewModel()) {
     val newsState = viewModel.newsState.collectAsState(initial = emptyList())
-    val newsList = newsState.value
+    val newsList = newsState.value.take(2)
+    val newsList2 = newsState.value.drop(2)
+    var count = 0;
+    Column(){
+        Row(
+            modifier = Modifier
+                .width(400.dp)
+                .padding(16.dp)
+        ) {
+            for (news in newsList) {
+                count++;
+                if (count > 2) continue
+                Column(
+                    modifier = Modifier
+                        .height(370.dp)
+                        .width(200.dp)
+                )
+                {
+                    NewsItem(news = news, onLikeClick = { viewModel.onLikeClick(news) })
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        for (news in newsList) {
-            NewsItem(news = news, onLikeClick = { viewModel.onLikeClick(news) })
-            Spacer(modifier = Modifier.height(16.dp))
+            }
+        }
+        Row(
+            modifier = Modifier
+                .width(400.dp)
+                .padding(16.dp)
+        ) {
+            for (news in newsList2) {
+                count++;
+                if (count > 2) {
+                    Column(
+                        modifier = Modifier
+                            .height(400.dp)
+                            .width(200.dp)
+                    )
+                    {
+                        NewsItem(news = news, onLikeClick = { viewModel.onLikeClick(news) })
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                }
+            }
         }
     }
 }
@@ -44,37 +82,61 @@ fun NewsScreen(viewModel: NewsViewModel = viewModel()) {
 fun NewsItem(news: News, onLikeClick: () -> Unit) {
     var liked by remember { mutableStateOf(false) }
 
-    Column {
-        Text(text = news.title)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(8.dp)
+    ) {
+        Text(
+            text = news.title,
+            color = Color.White,
+            modifier = Modifier
+                .background(Color.Blue)
+                .padding(8.dp)
+        )
         Spacer(modifier = Modifier.height(8.dp))
         Text(text = news.content)
+        Spacer(modifier = Modifier.weight(1f)) // Заполнитель, чтобы лайки были внизу
 
-        Row(
+        // Разместите лайки внизу
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .height(48.dp)
+                .background(Color.LightGray),
+            contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "${news.likes} Likes",
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
-                    .weight(0.9f)
-                    .padding(start = 4.dp)
-            )
-            IconButton(
-                onClick = {
-                    onLikeClick()
-                    liked = true
-                },
-                modifier = Modifier
-                    .weight(0.1f)
-                    .padding(end = 4.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.FavoriteBorder,
-                    contentDescription = "Like"
+                Text(
+                    text = "${news.likes} Likes",
+                    color = Color.Red
                 )
+                IconButton(
+                    onClick = {
+                        onLikeClick()
+                        liked = true
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.FavoriteBorder,
+                        contentDescription = "Like"
+                    )
+                }
             }
         }
     }
 }
+
+
+
+
+
+
+
