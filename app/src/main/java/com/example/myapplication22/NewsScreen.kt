@@ -1,9 +1,11 @@
 package com.example.myapplication22
 
+
+import android.util.DisplayMetrics
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -12,19 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
-
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.runtime.*
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun NewsScreen(viewModel: NewsViewModel = viewModel()) {
@@ -35,8 +24,8 @@ fun NewsScreen(viewModel: NewsViewModel = viewModel()) {
     Column(){
         Row(
             modifier = Modifier
-                .width(400.dp)
                 .padding(16.dp)
+                .fillMaxWidth()
         ) {
             for (news in newsList) {
                 count++;
@@ -44,10 +33,11 @@ fun NewsScreen(viewModel: NewsViewModel = viewModel()) {
                 Column(
                     modifier = Modifier
                         .height(370.dp)
-                        .width(200.dp)
+                        .width(165.dp)
+                        .align(Alignment.CenterVertically)
                 )
                 {
-                    NewsItem(news = news, onLikeClick = { viewModel.onLikeClick(news) })
+                    NewsItem(news = news, onLikeClick = { viewModel.likeClick(news) })
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
@@ -56,18 +46,21 @@ fun NewsScreen(viewModel: NewsViewModel = viewModel()) {
         Row(
             modifier = Modifier
                 .width(400.dp)
-                .padding(16.dp)
+                .padding(18.dp)
+
         ) {
             for (news in newsList2) {
                 count++;
                 if (count > 2) {
                     Column(
                         modifier = Modifier
-                            .height(400.dp)
-                            .width(200.dp)
+                            .height(370.dp)
+                            .width(165.dp)
+                            .align(Alignment.CenterVertically)
+
                     )
                     {
-                        NewsItem(news = news, onLikeClick = { viewModel.onLikeClick(news) })
+                        NewsItem(news = news, onLikeClick = { viewModel.likeClick(news) })
                         Spacer(modifier = Modifier.height(16.dp))
                     }
 
@@ -85,15 +78,16 @@ fun NewsItem(news: News, onLikeClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(Color.LightGray)
             .padding(8.dp)
     ) {
         Text(
             text = news.title,
             color = Color.White,
             modifier = Modifier
-                .background(Color.Blue)
+                .background(Color.Black)
                 .padding(8.dp)
+                .fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(text = news.content)
@@ -104,7 +98,7 @@ fun NewsItem(news: News, onLikeClick: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp)
-                .background(Color.LightGray),
+                .background(Color.Gray),
             contentAlignment = Alignment.Center
         ) {
             Row(
@@ -116,7 +110,7 @@ fun NewsItem(news: News, onLikeClick: () -> Unit) {
             ) {
                 Text(
                     text = "${news.likes} Likes",
-                    color = Color.Red
+                    color = Color.White
                 )
                 IconButton(
                     onClick = {

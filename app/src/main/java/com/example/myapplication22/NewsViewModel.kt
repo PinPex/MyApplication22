@@ -1,46 +1,52 @@
 package com.example.myapplication22
 
+import android.os.Debug
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlin.concurrent.thread
 import kotlin.random.Random
 class NewsViewModel : ViewModel() {
     private val newsList = mutableListOf(
-        News("Заголовок 1", "Содержание новости 1", 0, false),
-        News("Заголовок 2", "Содержание новости 2", 0, false),
-        News("Заголовок 3", "Содержание новости 3", 0, false),
-        News("Заголовок 4", "Содержание новости 4", 0, false),
-        News("Заголовок 5", "Содержание новости 5", 0, false),
-        News("Заголовок 6", "Содержание новости 6", 0,false),
-        News("Заголовок 7", "Содержание новости 7", 0,false),
-        News("Заголовок 8", "Содержание новости 8", 0,false),
-        News("Заголовок 9", "Содержание новости 9", 0,false),
-        News("Заголовок 10", "Содержание новости 10", 0,false),
+        News("Новость 1", "Lorem ipsum", 0, false),
+        News("Новость 2", "Lorem ipsum", 0, false),
+        News("Новость 3", "Lorem ipsum", 0, false),
+        News("Новость 4", "Lorem ipsum", 0, false),
+        News("Новость 5", "Lorem ipsum", 0, false),
+        News("Новость 6", "Lorem ipsum", 0,false),
+        News("Новость 7", "Lorem ipsum", 0,false),
+        News("Новость 8", "Lorem ipsum", 0,false),
+        News("Новость 9", "Lorem ipsum", 0,false),
+        News("Новость 10", "Lorem ipsum", 0,false),
     )
-
     private val _newsState = MutableStateFlow(getRandomNewsSubset())
     val newsState: StateFlow<List<News>> = _newsState
 
     init {
-        startUpdatingNews()
+        startRefreshingNews()
     }
 
-    fun onLikeClick(news: News) {
+    fun likeClick(news: News) {
         val index = newsList.indexOf(news)
         if (index != -1 && !newsList[index].likedByUser) {
             newsList[index].likes++
             newsList[index].likedByUser = true // Устанавливаем флаг, что пользователь поставил лайк
-            // Обновляем состояние только среди отображаемых новостей
-            val updatedSubset = _newsState.value.map { if (it == news) newsList[index] else it }
-            _newsState.value = updatedSubset
+
+            replaceCurrentNews(_newsState.value.indexOf(newsList[index]), index)
         }
     }
 
-    private fun startUpdatingNews() {
-        GlobalScope.launch {
+    private fun startRefreshingNews() {
+        viewModelScope.launch {
             while (true) {
                 delay(5000)
                 replaceRandomNews()
@@ -49,22 +55,23 @@ class NewsViewModel : ViewModel() {
     }
 
     private fun replaceRandomNews() {
-        val visibleNews = _newsState.value
-        val remainingNews = newsList.filterNot { it in visibleNews }
+        val inVisibleListNews = _newsState.value
+        val remainNews = newsList.filterNot { it in inVisibleListNews }
 
-        if (remainingNews.isNotEmpty()) {
-            val randomVisibleIndex = Random.nextInt(visibleNews.size)
-            val randomRemainingIndex = Random.nextInt(remainingNews.size)
-
-            val updatedVisibleList = visibleNews.toMutableList()
-            updatedVisibleList[randomVisibleIndex] = remainingNews[randomRemainingIndex]
-
-            _newsState.value = updatedVisibleList
+        if (remainNews.isNotEmpty()) {
+            val randInVisibleListIndex = Random.nextInt(inVisibleListNews.size)
+            val randRemainIndex = Random.nextInt(remainNews.size)
+            replaceCurrentNews(randInVisibleListIndex, newsList.indexOf(remainNews[randRemainIndex]))
         }
     }
 
+    private fun replaceCurrentNews(visibleListIndex: Int, newsListIndex: Int) {
+        val updatedVisibleList = _newsState.value.toMutableList()
+        updatedVisibleList[visibleListIndex] = newsList[newsListIndex]
+        _newsState.value = updatedVisibleList.toList()
+    }
 
     private fun getRandomNewsSubset(): List<News> {
-        return newsList.shuffled().take(4) // Выбираем случайные 4 новости из списка
+        return newsList.shuffled().take(4)
     }
 }
