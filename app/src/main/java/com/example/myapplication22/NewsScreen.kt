@@ -78,7 +78,7 @@ fun NewsItem(news: News, onLikeClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.LightGray)
+            .background(Color.White)
             .padding(8.dp)
     ) {
         Text(
@@ -109,7 +109,7 @@ fun NewsItem(news: News, onLikeClick: () -> Unit) {
                     .padding(horizontal = 16.dp)
             ) {
                 Text(
-                    text = "${news.likes} Likes",
+                    text = "${news.likes.value} Likes",
                     color = Color.White
                 )
                 IconButton(

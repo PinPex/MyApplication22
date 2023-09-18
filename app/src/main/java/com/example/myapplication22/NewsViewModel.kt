@@ -2,6 +2,7 @@ package com.example.myapplication22
 
 import android.os.Debug
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -17,16 +18,16 @@ import kotlin.concurrent.thread
 import kotlin.random.Random
 class NewsViewModel : ViewModel() {
     private val newsList = mutableListOf(
-        News("Новость 1", "Lorem ipsum", 0, false),
-        News("Новость 2", "Lorem ipsum", 0, false),
-        News("Новость 3", "Lorem ipsum", 0, false),
-        News("Новость 4", "Lorem ipsum", 0, false),
-        News("Новость 5", "Lorem ipsum", 0, false),
-        News("Новость 6", "Lorem ipsum", 0,false),
-        News("Новость 7", "Lorem ipsum", 0,false),
-        News("Новость 8", "Lorem ipsum", 0,false),
-        News("Новость 9", "Lorem ipsum", 0,false),
-        News("Новость 10", "Lorem ipsum", 0,false),
+        News("Новость 1", "Lorem ipsum 1", mutableStateOf(0), false),
+        News("Новость 2", "Lorem ipsum 2", mutableStateOf(0), false),
+        News("Новость 3", "Lorem ipsum 3", mutableStateOf(0), false),
+        News("Новость 4", "Lorem ipsum 4", mutableStateOf(0), false),
+        News("Новость 5", "Lorem ipsum 5", mutableStateOf(0), false),
+        News("Новость 6", "Lorem ipsum 6", mutableStateOf(0),false),
+        News("Новость 7", "Lorem ipsum 7", mutableStateOf(0),false),
+        News("Новость 8", "Lorem ipsum 8", mutableStateOf(0),false),
+        News("Новость 9", "Lorem ipsum 9", mutableStateOf(0),false),
+        News("Новость 10", "Lorem ipsum 10", mutableStateOf(0),false),
     )
     private val _newsState = MutableStateFlow(getRandomNewsSubset())
     val newsState: StateFlow<List<News>> = _newsState
@@ -38,7 +39,7 @@ class NewsViewModel : ViewModel() {
     fun likeClick(news: News) {
         val index = newsList.indexOf(news)
         if (index != -1 && !newsList[index].likedByUser) {
-            newsList[index].likes++
+            newsList[index].likes.value = newsList[index].likes.value + 1
             newsList[index].likedByUser = true // Устанавливаем флаг, что пользователь поставил лайк
 
             replaceCurrentNews(_newsState.value.indexOf(newsList[index]), index)
