@@ -39,10 +39,14 @@ class NewsViewModel : ViewModel() {
     fun likeClick(news: News) {
         val index = newsList.indexOf(news)
         if (index != -1 && !newsList[index].likedByUser) {
-            newsList[index].likes.value = newsList[index].likes.value + 1
+            newsList[index].likes.value++
             newsList[index].likedByUser = true // Устанавливаем флаг, что пользователь поставил лайк
-
-            replaceCurrentNews(_newsState.value.indexOf(newsList[index]), index)
+        }
+        else {
+            if(newsList[index].likedByUser){
+                newsList[index].likes.value--
+                newsList[index].likedByUser = false
+            }
         }
     }
 

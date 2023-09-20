@@ -115,12 +115,13 @@ fun NewsItem(news: News, onLikeClick: () -> Unit) {
                 IconButton(
                     onClick = {
                         onLikeClick()
-                        liked = true
+                        liked = !liked
                     }
                 ) {
                     Icon(
                         imageVector = Icons.Default.FavoriteBorder,
-                        contentDescription = "Like"
+                        contentDescription = "Like",
+                        tint = if (liked) Color.Red else Color.Unspecified
                     )
                 }
             }
